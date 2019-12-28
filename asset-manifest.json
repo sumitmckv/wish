@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/wish-app/static/css/main.9ea1b979.chunk.css",
+    "main.js": "/wish-app/static/js/main.1df034d3.chunk.js",
+    "main.js.map": "/wish-app/static/js/main.1df034d3.chunk.js.map",
+    "runtime-main.js": "/wish-app/static/js/runtime-main.dd5ed321.js",
+    "runtime-main.js.map": "/wish-app/static/js/runtime-main.dd5ed321.js.map",
+    "static/js/2.37dcf349.chunk.js": "/wish-app/static/js/2.37dcf349.chunk.js",
+    "static/js/2.37dcf349.chunk.js.map": "/wish-app/static/js/2.37dcf349.chunk.js.map",
+    "index.html": "/wish-app/index.html",
+    "precache-manifest.892c9d45d2039b9bad0f6f7612c4f90d.js": "/wish-app/precache-manifest.892c9d45d2039b9bad0f6f7612c4f90d.js",
+    "service-worker.js": "/wish-app/service-worker.js",
+    "static/css/main.9ea1b979.chunk.css.map": "/wish-app/static/css/main.9ea1b979.chunk.css.map",
+    "static/js/2.37dcf349.chunk.js.LICENSE": "/wish-app/static/js/2.37dcf349.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.dd5ed321.js",
+    "static/js/2.37dcf349.chunk.js",
+    "static/css/main.9ea1b979.chunk.css",
+    "static/js/main.1df034d3.chunk.js"
+  ]
+}
