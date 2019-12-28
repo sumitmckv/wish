@@ -25,7 +25,7 @@ export default class App extends React.Component{
 
     constructor(props: any) {
         super(props);
-        this.sound = new Audio(window.location.href + "/firework.mp3");
+        this.sound = new Audio(window.location.href + "firework.mp3");
         this.canvasRef = React.createRef();
     }
 
