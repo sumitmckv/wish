@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import {calculateDistance, random, year} from "./util";
+import {calculateDistance, random} from "./util";
 import Firework from "./Fireworks";
 import Particle from "./Particle";
 
@@ -22,10 +22,17 @@ export default class App extends React.Component{
     private ch: number = 0;
     private mx: number = 0;
     private my: number = 0;
+    private readonly wish: string | null;
+    private readonly name: string | null;
 
     constructor(props: any) {
         super(props);
-        this.sound = new Audio(window.location.href + "firework.mp3");
+        const urlStr = window.location.href;
+        const url: URL = new URL(urlStr);
+        const params: URLSearchParams = url.searchParams;
+        this.wish = params.get("message");
+        this.name = params.get("to");
+        this.sound = new Audio(url.origin + url.pathname + "/firework.mp3");
         this.canvasRef = React.createRef();
     }
 
@@ -100,14 +107,19 @@ export default class App extends React.Component{
     }
 
     drawWish() {
-        if (this.ctx) {
+        if (this.ctx && this.wish && this.name) {
             this.ctx.textBaseline = 'middle';
             this.ctx.textAlign = 'center';
             this.ctx.fillStyle = "#fff";
-            this.ctx.font = '80px san-serif';
-            const wish = `HAPPY NEW YEAR ${year()}`;
-            this.ctx.strokeText(wish, this.cw/2, this.ch/2.5);
-            this.ctx.fillText("SUMIT", this.cw/2, this.ch/2);
+            if (this.cw <= 400) {
+                this.ctx.font = '30px san-serif';
+            } else if (this.cw <= 600) {
+                this.ctx.font = '40px san-serif';
+            } else {
+                this.ctx.font = '60px san-serif';
+            }
+            this.ctx.strokeText(this.wish.toUpperCase(), this.cw/2, this.ch/2.5);
+            this.ctx.fillText(this.name.toUpperCase(), this.cw/2, this.ch/2);
         }
     }
     // draw firework
@@ -168,8 +180,8 @@ export default class App extends React.Component{
     }
 
     createParticles( x: number, y: number ) {
-        var particleCount = 300;
-        var type = Math.floor(random(1, 5));
+        let particleCount = 300;
+        let type = Math.floor(random(1, 5));
         while(particleCount--){
             this.particles.push(new Particle(x, y, type, this.hue));
         }
