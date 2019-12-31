@@ -1,6 +1,9 @@
 import {random, calculateDistance} from './util'
 
 export default class Firework {
+    // The single actual object launched from the ground are Firework objects. It rises 
+    // up and explodes after some distance. After explosion, it is no longer Firework, but it is now
+    // a group of Particle objects.
     x: number;
     y: number;
     sx: number;
@@ -32,6 +35,7 @@ export default class Firework {
         this.distanceToTarget = calculateDistance(sx, sy, tx, ty);
         this.distanceTraveled = 0;
         //track past coordinates to creates a trail effect
+        // Firework has small tail of 2 units, Particles have larger tail of 6 units for the greater effect
         this.coordinates = [];
         this.coordinateCount = 2;
         while (this.coordinateCount--) {

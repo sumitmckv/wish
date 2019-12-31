@@ -1,6 +1,8 @@
 import {random} from "./util";
 
 export default class Particle {
+    // After explosion the scattered objects are particles. They are moving away 
+    // from the common center after explosion
     x: number;
     y: number;
     angle: number = 0;
