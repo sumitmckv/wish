@@ -5,6 +5,7 @@ import Firework from "./Fireworks";
 import Particle from "./Particle";
 
 export default class App extends React.Component{
+    private readonly Gravity: number = 4;
     private readonly canvasRef: React.RefObject<HTMLCanvasElement>;
     private canvas: HTMLCanvasElement | null | undefined;
     private ctx: CanvasRenderingContext2D | null | undefined;
@@ -14,7 +15,7 @@ export default class App extends React.Component{
     private hue: number = 120;
     private limiterTotal: number = 20;
     private limiterTick: number = 0;
-    private timerTotal: number = 0;
+    private timerTotal: number = 10;
     private randomTime: number = 0;
     private timerTick: number = 0;
     private mousedown: boolean = false;
@@ -86,7 +87,7 @@ export default class App extends React.Component{
         else {
             firework.targetRadius = 1;
         }
-        firework.speed *= firework.acceleration;
+        firework.speed += firework.acceleration;
         
         // This is the line where we are updating the velocity of firework, can add gravity effect here TODO
         let vx = Math.cos(firework.angle) * firework.speed, vy = Math.sin(firework.angle) * firework.speed;
@@ -155,9 +156,6 @@ export default class App extends React.Component{
     // particles are effected by gravity, and hence they move in a curved parabolic path, looks good
     // But the gravity implementation is wierd, non-sensical, and just somehow added for the effect.
     // Each particle it seems are affected by different personal gravity (why?? check ./particle),
-    // And the interaction of y-velocity with gravity is wierd, we are just adding it directly to 
-    // velocity, gravity does not work that way!!. 
-
     // TODO: Rework the gravity interactions
 
     updateParticle(index: number) {
@@ -167,9 +165,8 @@ export default class App extends React.Component{
         // apply velocity
         particle.x += Math.cos(particle.angle) * particle.speed;
 
-        // WIERD GRAVITY INTERACTION!!
-        particle.y += Math.sin(particle.angle) * particle.speed + particle.gravity;
-        
+        // not wierd, v2 = v1 + at; but for time slices of 1 seconds t = 1, v2 = v1 + a is fine
+        particle.y += Math.sin(particle.angle) * particle.speed + this.Gravity;        
         // fade out the particle
         // this.alpha -= this.decay * this.alpha;
 
@@ -208,7 +205,7 @@ export default class App extends React.Component{
 
     createParticles( x: number, y: number ) {
         // For each explosion we are creating 300 particles, wow, thats a lot
-        let particleCount = 300;
+        let particleCount = 100;
         let type = Math.floor(random(1, 5));
         while(particleCount--){
             this.particles.push(new Particle(x, y, type, this.hue));

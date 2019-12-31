@@ -43,7 +43,7 @@ export default class Firework {
         }
         this.angle = Math.atan2(ty - sy, tx - sx);
         this.speed = 1;
-        this.acceleration = 1.2;
+        this.acceleration = 1.05;
         this.brightness = random(50, 70);
         this.targetRadius = 1;
     }
