@@ -5,6 +5,7 @@ import Firework from "./Fireworks";
 import Particle from "./Particle";
 
 export default class App extends React.Component{
+    private readonly Gravity: number = 4;
     private readonly canvasRef: React.RefObject<HTMLCanvasElement>;
     private canvas: HTMLCanvasElement | null | undefined;
     private ctx: CanvasRenderingContext2D | null | undefined;
@@ -14,7 +15,7 @@ export default class App extends React.Component{
     private hue: number = 120;
     private limiterTotal: number = 20;
     private limiterTick: number = 0;
-    private timerTotal: number = 0;
+    private timerTotal: number = 10;
     private randomTime: number = 0;
     private timerTick: number = 0;
     private mousedown: boolean = false;
@@ -86,9 +87,15 @@ export default class App extends React.Component{
         else {
             firework.targetRadius = 1;
         }
-        firework.speed *= firework.acceleration;
+        firework.speed += firework.acceleration;
+        
+        // This is the line where we are updating the velocity of firework, can add gravity effect here TODO
         let vx = Math.cos(firework.angle) * firework.speed, vy = Math.sin(firework.angle) * firework.speed;
+        
         firework.distanceTraveled = calculateDistance(firework.sx, firework.sy, firework.x + vx, firework.y + vy);
+        
+        // if target point reached, explode the firework 
+        // delete the Firework object, create Particle objects, play some nice sound
         if (firework.distanceTraveled >= firework.distanceToTarget) {
             firework.coordinates.pop();
             firework.coordinates.unshift([firework.tx, firework.ty]);
@@ -98,10 +105,12 @@ export default class App extends React.Component{
             this.drawFirework(index);
             this.fireworks.splice(index, 1);
         }
-        else {
+        else { // if target not reached, then update  the firework coordinates
             firework.x += vx;
             firework.y += vy;
         }
+
+        // coordinates array we use to keep a nice tail
         firework.coordinates.pop();
         firework.coordinates.unshift([firework.x, firework.y]);
     }
@@ -124,6 +133,10 @@ export default class App extends React.Component{
     }
     // draw firework
     drawFirework(index: number) {
+        // Drawing firework is pretty simple, just draw a straight line from end of 
+        // the current position to the end of tail. For firework 
+        // we have small tail of 2 units, that means the line will be 2 units long only.
+        // the tail we keep track using "firework.coordinates" array
         if (this.ctx) {
             const firework = this.fireworks[index];
             this.drawWish();
@@ -140,15 +153,24 @@ export default class App extends React.Component{
     }
 
     // update particle
+    // particles are effected by gravity, and hence they move in a curved parabolic path, looks good
+    // But the gravity implementation is wierd, non-sensical, and just somehow added for the effect.
+    // Each particle it seems are affected by different personal gravity (why?? check ./particle),
+    // TODO: Rework the gravity interactions
+
     updateParticle(index: number) {
         // slow down the particle
         const particle = this.particles[index];
         particle.speed *= particle.friction;
         // apply velocity
         particle.x += Math.cos(particle.angle) * particle.speed;
-        particle.y += Math.sin(particle.angle) * particle.speed + particle.gravity;
+
+        // not wierd, v2 = v1 + at; but for time slices of 1 seconds t = 1, v2 = v1 + a is fine
+        particle.y += Math.sin(particle.angle) * particle.speed + this.Gravity;        
         // fade out the particle
         // this.alpha -= this.decay * this.alpha;
+
+        // This is how we see the particles changing color as they scatter in  the sky
         particle.alpha -= particle.decay;
         if (particle.type === 4 && particle.alpha <= 0.5) {
             particle.brightness += 50;
@@ -167,6 +189,8 @@ export default class App extends React.Component{
     }
     // draw particle
     drawParticle(index: number) {
+        // This looks like we are drawing a line from head to tail for particle, 
+        // but i can see in the ui we are getting a arc curved line, how? no idea need to understand
         if (this.ctx) {
             const particle = this.particles[index];
             this.drawWish();
@@ -180,7 +204,8 @@ export default class App extends React.Component{
     }
 
     createParticles( x: number, y: number ) {
-        let particleCount = 300;
+        // For each explosion we are creating 300 particles, wow, thats a lot
+        let particleCount = 100;
         let type = Math.floor(random(1, 5));
         while(particleCount--){
             this.particles.push(new Particle(x, y, type, this.hue));
